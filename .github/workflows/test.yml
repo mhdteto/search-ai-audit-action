@@ -1,0 +1,44 @@
+name: Test reusable observation action
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s tests -v
+      - run: python3 -m unittest discover -s vendor/tests -v
+      - uses: ./
+        id: observe
+        with:
+          url: https://example.org/
+          fixture: tests/fixture.json
+          output-dir: reports/fictional
+      - name: Verify actual composite outputs
+        env:
+          JSON_PATH: ${{ steps.observe.outputs.report-json }}
+          HTML_PATH: ${{ steps.observe.outputs.report-html }}
+          TRANSPORT: ${{ steps.observe.outputs.transport }}
+        run: |
+          python3 - <<'PYCODE'
+          import os,json,pathlib
+          r=json.loads(pathlib.Path(os.environ['JSON_PATH']).read_text())
+          assert r['transport']==os.environ['TRANSPORT']=='synthetic offline fixture'
+          assert r['page']['status']==200
+          assert pathlib.Path(os.environ['HTML_PATH']).is_file()
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fictional-observation
+          path: reports/fictional/
+          if-no-files-found: error
+          retention-days: 7

@@ -1,0 +1,49 @@
+name: Search and AI Discoverability Observation
+description: Generate bounded technical observations as JSON and HTML; no ranking or AI visibility score.
+author: Mohammed Teto
+branding:
+  icon: search
+  color: blue
+inputs:
+  url:
+    description: Public HTTP(S) page URL you are authorized to inspect; fixture key in offline mode.
+    required: true
+  fixture:
+    description: Optional synthetic response JSON, relative to the caller workspace; no target network calls when supplied.
+    required: false
+    default: ''
+  output-dir:
+    description: Relative workspace directory for report.json and report.html; no symlinks or traversal.
+    required: false
+    default: reports/discoverability
+outputs:
+  report-json:
+    description: Workspace-relative JSON evidence path.
+    value: ${{ steps.observe.outputs.report-json }}
+  report-html:
+    description: Workspace-relative standalone HTML report path.
+    value: ${{ steps.observe.outputs.report-html }}
+  transport:
+    description: Explicit live or synthetic transport label.
+    value: ${{ steps.observe.outputs.transport }}
+runs:
+  using: composite
+  steps:
+    - name: Require the validated runner platform
+      shell: bash
+      run: |
+        if [ "$RUNNER_OS" != "Linux" ]; then
+          echo "This action currently supports Linux runners only." >&2
+          exit 2
+        fi
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    - name: Collect bounded observations
+      id: observe
+      shell: bash
+      env:
+        AUDIT_URL: ${{ inputs.url }}
+        AUDIT_FIXTURE: ${{ inputs.fixture }}
+        AUDIT_OUTPUT_DIR: ${{ inputs.output-dir }}
+      run: python "$GITHUB_ACTION_PATH/run.py"
