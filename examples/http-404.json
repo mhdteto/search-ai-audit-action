@@ -1,0 +1,20 @@
+{
+  "collected_at": "2026-11-01T00:00:00Z",
+  "responses": {
+    "https://example.org/missing": {
+      "status": 404,
+      "headers": {"content-type": "text/html; charset=utf-8"},
+      "body": "<!doctype html><html lang=\"en\"><head><title>Fictional missing page</title></head><body><h1>Page not found</h1></body></html>"
+    },
+    "https://example.org/robots.txt": {
+      "status": 200,
+      "headers": {"content-type": "text/plain"},
+      "body": "User-agent: *\nAllow: /\nSitemap: https://example.org/sitemap.xml\n"
+    },
+    "https://example.org/sitemap.xml": {
+      "status": 200,
+      "headers": {"content-type": "application/xml"},
+      "body": "<?xml version=\"1.0\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://example.org/</loc></url></urlset>"
+    }
+  }
+}

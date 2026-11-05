@@ -36,6 +36,23 @@ class RunnerTests(unittest.TestCase):
         self.assertIn('report-json=reports/demo/report.json',(self.workspace/'outputs').read_text())
         self.assertIn('synthetic offline fixture',(self.workspace/'summary').read_text())
 
+    def test_offline_404_still_generates_reports(self):
+        examples = self.workspace / 'examples'
+        examples.mkdir()
+        shutil.copyfile(ROOT / 'examples/http-404.json', examples / 'http-404.json')
+        p = self.run_action(
+            AUDIT_URL='https://example.org/missing',
+            AUDIT_FIXTURE='examples/http-404.json',
+            AUDIT_OUTPUT_DIR='reports/http-404',
+        )
+        self.assertEqual(p.returncode, 0, p.stderr)
+        output = self.workspace / 'reports/http-404'
+        report = json.loads((output / 'report.json').read_text(encoding='utf-8'))
+        self.assertEqual(report['page']['status'], 404)
+        self.assertEqual(report['transport'], 'synthetic offline fixture')
+        html = (output / 'report.html').read_text(encoding='utf-8')
+        self.assertIn('<dt>Page HTTP status</dt><dd>404</dd>', html)
+
     def test_path_boundaries(self):
         for path in ['../escape',str(self.workspace.parent/'escape'),'reports\nforged=1','.', '']:
             with self.subTest(path=path):
