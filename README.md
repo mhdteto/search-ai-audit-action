@@ -10,7 +10,7 @@ Run one bounded public-page observation inside GitHub Actions. Get dated JSON ev
 
 [Use the audit starter](https://github.com/mhdteto/search-ai-audit-starter) · [Interactive explorer](https://mhdteto.github.io/authority-architecture-system/) · [Method](https://github.com/mhdteto/authority-architecture-system) · [Advisory practice](https://mohammedteto.com/)
 
-[French starter guide](https://github.com/mhdteto/search-ai-audit-starter/blob/main/docs/QUICKSTART.fr.md) · [Release notes](CHANGELOG.md)
+[French starter guide](https://github.com/mhdteto/search-ai-audit-starter/blob/main/docs/QUICKSTART.fr.md) · [Stable release v1.0.0](https://github.com/mhdteto/search-ai-audit-action/releases/tag/v1.0.0) · [Changelog](CHANGELOG.md)
 
 ## See the workflow in action
 
